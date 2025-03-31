@@ -1,9 +1,16 @@
 import React from 'react'
+import NavBar from '../Resusable Components/NavBar'
 
-const Settings = () => {
+const SettingsPage = () => {
     return (
-        <div>Settings Page</div>
+        <div className='w-full bg-[#F7F7FB] relative'>
+            <NavBar activeRoute='settings' />
+            <div className='absolute top-0 left-1/2 transform -translate-x-1/2 mt-20 bg-[#F7F7FB] z-10'>
+
+                Settings page here!
+            </div>
+        </div>
     )
 }
 
-export default Settings
+export default SettingsPage

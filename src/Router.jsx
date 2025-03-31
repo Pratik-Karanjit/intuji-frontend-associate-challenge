@@ -7,9 +7,9 @@ import Messages from './components/Messages.jsx';
 import Analytics from './components/Analytics.jsx';
 import Teams from './components/Teams.jsx';
 import Profile from './components/Profile.jsx';
-import { Settings } from 'lucide-react';
 import Help from './components/Help.jsx';
 import Logout from './components/Logout.jsx';
+import SettingsPage from './components/Settings.jsx';
 
 const MyRouter = () => {
   return (
@@ -21,7 +21,7 @@ const MyRouter = () => {
         <Route path="/analytics" element={<Analytics />} exact />
         <Route path="/teams" element={<Teams />} exact />
         <Route path="/profile" element={<Profile />} exact />
-        <Route path="/settings" element={<Settings />} exact />
+        <Route path="/settings" element={<SettingsPage />} exact />
         <Route path="/help" element={<Help />} exact />
         <Route path="/logout" element={<Logout />} exact />
       </Routes>

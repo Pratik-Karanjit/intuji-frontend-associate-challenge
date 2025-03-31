@@ -28,13 +28,14 @@ Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryS
 const Dashboard = () => {
     const [activeNavItem, setActiveNavItem] = useState('dashboard');
     const [hoveredNavItem, setHoveredNavItem] = useState(null);
-    const navigate = useNavigate(); // Initialize useNavigate
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
+    const navigate = useNavigate();
 
     const handleNavigation = (route) => {
-        setActiveNavItem(route); // Update activeNavItem state
-        navigate(`/${route}`); // Navigate to the respective route
+        setActiveNavItem(route);
+        navigate(`/${route}`);
+        setShowMobileMenu(false); // Close mobile menu on navigation
     };
-
 
     const chartRef = useRef(null);
 
@@ -42,19 +43,15 @@ const Dashboard = () => {
         const chart = chartRef.current;
         if (!chart) return;
 
-        // Get the context for creating gradients
         const ctx = chart.ctx;
-
         const purpleGradient = ctx.createLinearGradient(0, 0, 0, 400);
-        purpleGradient.addColorStop(0, "rgba(182, 180, 230, 0.3)"); // Much lighter purple with reduced opacity
-        purpleGradient.addColorStop(1, "rgba(182, 180, 230, 0)"); // 0% at bottom
+        purpleGradient.addColorStop(0, "rgba(182, 180, 230, 0.3)");
+        purpleGradient.addColorStop(1, "rgba(182, 180, 230, 0)");
 
-        // Create gradient for the yellow line (Dataset 2)
         const yellowGradient = ctx.createLinearGradient(0, 0, 0, 400);
-        yellowGradient.addColorStop(0, "#F8CD70"); // 100% at top
-        yellowGradient.addColorStop(1, "rgba(248, 205, 112, 0)"); // 0% at bottom
+        yellowGradient.addColorStop(0, "#F8CD70");
+        yellowGradient.addColorStop(1, "rgba(248, 205, 112, 0)");
 
-        // Update the chart with new gradients
         chart.data.datasets[0].backgroundColor = purpleGradient;
         chart.data.datasets[1].backgroundColor = yellowGradient;
         chart.update();
@@ -68,7 +65,7 @@ const Dashboard = () => {
                 data: [10, 5, 90, 20, 90, 30, 40],
                 borderColor: "#8684EB",
                 borderWidth: 4,
-                backgroundColor: "rgba(71, 69, 164, 0.2)", // Placeholder until gradient loads
+                backgroundColor: "rgba(71, 69, 164, 0.2)",
                 fill: true,
                 pointRadius: 0,
                 tension: 0.4,
@@ -78,7 +75,7 @@ const Dashboard = () => {
                 data: [30, 32, 35, 30, 33, 40, 31, 32, 30],
                 borderColor: "#F8CD70",
                 borderWidth: 4,
-                backgroundColor: "rgba(248, 205, 112, 0.2)", // Placeholder until gradient loads
+                backgroundColor: "rgba(248, 205, 112, 0.2)",
                 fill: true,
                 pointRadius: 0,
                 tension: 0.4,
@@ -88,10 +85,10 @@ const Dashboard = () => {
 
     const options = {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             title: {
                 display: true,
-                text: "Analytics Chart",
             },
             tooltip: {
                 mode: "index",
@@ -104,7 +101,7 @@ const Dashboard = () => {
         },
         elements: {
             point: {
-                radius: 0, // Removes nodes
+                radius: 0,
             },
         },
         scales: {
@@ -117,18 +114,15 @@ const Dashboard = () => {
         },
     };
 
-    // Function to render SVG icons with appropriate fill based on active/hover state
     const renderNavIcon = (name, path) => {
         const isActive = activeNavItem === name;
         const isHovered = hoveredNavItem === name;
         const strokeColor = (isActive || isHovered) ? "#F9BA33" : "currentColor";
 
-        // Custom rendering for each icon
         switch (name) {
             case 'dashboard':
                 return <LayoutDashboard size={22} stroke={strokeColor} />;
             default:
-                // For imported SVG images, we'll use an inline SVG with dynamic fill
                 return (
                     <div className="relative h-6 w-6">
                         <img
@@ -136,7 +130,6 @@ const Dashboard = () => {
                             alt={`${name} icon`}
                             className={`h-6 w-6 transition-opacity ${(isActive || isHovered) ? "opacity-0" : "opacity-100"}`}
                         />
-                        {/* SVG overlay that appears on hover/active with yellow fill */}
                         {(isActive || isHovered) && (
                             <div className="absolute inset-0 flex items-center justify-center">
                                 {name === 'schedule' && (
@@ -174,7 +167,7 @@ const Dashboard = () => {
                                 )}
                                 {name === 'settings' && (
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M3 9.11011V14.8801C3 17.0001 3 17.0001 5 18.3501L10.5 21.5301C11.33 22.0101 12.68 22.0101 13.5 21.5301L19 18.3501C21 17.0001 21 17.0001 21 14.8901V9.11011C21 7.00011 21 7.00011 19 5.65011L13.5 2.47011C12.68 1.99011 11.33 1.99011 10.5 2.47011L5 5.65011C3 7.00011 3 7.00011 3 9.11011Z" stroke="#F9BA33" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M3 9.11011V14.8801C3 17.0001 3 17.0001 5 18.35L10.5 21.5301C11.33 22.0101 12.68 22.0101 13.5 21.5301L19 18.35C21 17.0001 21 17.0001 21 14.8901V9.11011C21 7.00011 21 7.00011 19 5.65011L13.5 2.47011C12.68 1.99011 11.33 1.99011 10.5 2.47011L5 5.65011C3 7.00011 3 7.00011 3 9.11011Z" stroke="#F9BA33" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                         <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="#F9BA33" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
                                 )}
@@ -187,7 +180,7 @@ const Dashboard = () => {
                                 )}
                                 {name === 'logout' && (
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M8.90002 7.56023C9.21002 3.96023 11.06 2.49023 15.11 2.49023H15.24C19.71 2.49023 21.5 4.28023 21.5 8.75023V15.2702C21.5 19.7402 19.71 21.5302 15.24 21.5302H15.11C11.09 21.5302 9.24002 20.0802 8.91002 16.5402" stroke="#F9BA33" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M8.90002 7.56C9.21002 3.96 11.06 2.49 15.11 2.49H15.24C19.71 2.49 21.5 4.28 21.5 8.75V15.27C21.5 19.74 19.71 21.53 15.24 21.53H15.11C11.09 21.53 9.24002 20.08 8.91002 16.54" stroke="#F9BA33" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                         <path d="M15 12H3.62" stroke="#F9BA33" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                         <path d="M5.85 8.65039L2.5 12.0004L5.85 15.3504" stroke="#F9BA33" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
@@ -199,172 +192,193 @@ const Dashboard = () => {
         }
     };
 
-
     return (
-        <div className="flex bg-gray-100 w-full">
-            {/* Left Sidebar */}
-            <div className="w-1/6 bg-white flex flex-col h-screen sticky top-0">
-                <div className="p-4 flex justify-center items-center">
+        <div className="flex flex-col md:flex-row bg-gray-100 w-full min-h-screen">
+            {/* Mobile Header */}
+            <div className="md:hidden flex items-center justify-between p-4 bg-white">
+                <div className="bg-[#D9D9D9] h-12 w-32 flex items-center justify-center">
+                    <img src={gallery} alt="Logo" className="h-6 w-6" />
+                </div>
+                <button
+                    onClick={() => setShowMobileMenu(!showMobileMenu)}
+                    className="p-2 rounded-md text-gray-700 hover:bg-gray-100"
+                >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {showMobileMenu ? (
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        ) : (
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                        )}
+                    </svg>
+                </button>
+            </div>
+
+            {/* Left Sidebar - Hidden on mobile unless toggled */}
+            <div className={`${showMobileMenu ? 'block' : 'hidden'} md:block w-full md:w-1/6 bg-white flex flex-col md:h-screen sticky top-0 z-10`}>
+                <div className="p-4 flex justify-center items-center hidden md:flex">
                     <div className="bg-[#D9D9D9] w-2/3 h-12 flex items-center justify-center">
                         <img src={gallery} alt="My Schedule" className="h-6 w-6" />
                     </div>
                 </div>
 
                 {/* Main Navigation */}
-                <div>
-                    <nav className="py-2">
-                        <ul className="space-y-5">
-                            <li
-                                className={`flex gap-3 items-center py-2 pl-16 -ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'dashboard' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
-                                onClick={() => handleNavigation('')} // Navigate to 'dashboard'
-                                onMouseEnter={() => setHoveredNavItem('dashboard')}
-                                onMouseLeave={() => setHoveredNavItem(null)}
-                            >
-                                {activeNavItem === 'dashboard' && (
-                                    <span className="absolute left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
-                                )}
-                                <div className="ml-3">
-                                    {renderNavIcon('dashboard', null)}
-                                </div>
-                                <span>Dashboard</span>
-                            </li>
-                            <li
-                                className={`flex gap-3 items-center py-2 pl-16 -ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'schedule' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
-                                onClick={() => handleNavigation('schedule')} // Navigate to 'schedule'
-                                onMouseEnter={() => setHoveredNavItem('schedule')}
-                                onMouseLeave={() => setHoveredNavItem(null)}
-                            >
-                                {activeNavItem === 'schedule' && (
-                                    <span className="absolute left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
-                                )}
-                                <div className="ml-3">
-                                    {renderNavIcon('schedule', Calendar)}
-                                </div>
-                                <span>Schedule</span>
-                            </li>
-                            <li
-                                className={`flex gap-3 items-center py-2 pl-16 -ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'message' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
-                                onClick={() => handleNavigation('messages')} // Navigate to 'message'
-                                onMouseEnter={() => setHoveredNavItem('message')}
-                                onMouseLeave={() => setHoveredNavItem(null)}
-                            >
-                                {activeNavItem === 'message' && (
-                                    <span className="absolute left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
-                                )}
-                                <div className="ml-3">
-                                    {renderNavIcon('message', sms)}
-                                </div>
-                                <span>Message</span>
-                            </li>
-                            <li
-                                className={`flex gap-3 items-center py-2 pl-16 -ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'analytics' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
-                                onClick={() => handleNavigation('analytics')} // Navigate to 'analytics'
-                                onMouseEnter={() => setHoveredNavItem('analytics')}
-                                onMouseLeave={() => setHoveredNavItem(null)}
-                            >
-                                {activeNavItem === 'analytics' && (
-                                    <span className="absolute left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
-                                )}
-                                <div className="ml-3">
-                                    {renderNavIcon('analytics', MyChart)}
-                                </div>
-                                <span>Analytics</span>
-                            </li>
-                            <li
-                                className={`flex gap-3 items-center py-2 pl-16 -ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'team' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
-                                onClick={() => handleNavigation('teams')} // Navigate to 'team'
-                                onMouseEnter={() => setHoveredNavItem('team')}
-                                onMouseLeave={() => setHoveredNavItem(null)}
-                            >
-                                {activeNavItem === 'team' && (
-                                    <span className="absolute left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
-                                )}
-                                <div className="ml-3">
-                                    {renderNavIcon('team', twoUsers)}
-                                </div>
-                                <span>Team</span>
-                            </li>
-                        </ul>
-                    </nav>
+                <div className="flex flex-col h-full">
+                    {/* Main navigation section */}
+                    <div className="flex-1 overflow-y-auto">
+                        <nav className="py-2">
+                            <ul className="space-y-5">
+                                <li
+                                    className={`flex gap-3 items-center py-2 px-4 md:pl-16 md:-ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'dashboard' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
+                                    onClick={() => handleNavigation('')}
+                                    onMouseEnter={() => setHoveredNavItem('dashboard')}
+                                    onMouseLeave={() => setHoveredNavItem(null)}
+                                >
+                                    {activeNavItem === 'dashboard' && (
+                                        <span className="absolute left-0 md:left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
+                                    )}
+                                    <div className="ml-3">
+                                        {renderNavIcon('dashboard', null)}
+                                    </div>
+                                    <span>Dashboard</span>
+                                </li>
+                                <li
+                                    className={`flex gap-3 items-center py-2 px-4 md:pl-16 md:-ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'schedule' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
+                                    onClick={() => handleNavigation('schedule')}
+                                    onMouseEnter={() => setHoveredNavItem('schedule')}
+                                    onMouseLeave={() => setHoveredNavItem(null)}
+                                >
+                                    {activeNavItem === 'schedule' && (
+                                        <span className="absolute left-0 md:left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
+                                    )}
+                                    <div className="ml-3">
+                                        {renderNavIcon('schedule', Calendar)}
+                                    </div>
+                                    <span>Schedule</span>
+                                </li>
+                                <li
+                                    className={`flex gap-3 items-center py-2 px-4 md:pl-16 md:-ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'message' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
+                                    onClick={() => handleNavigation('messages')}
+                                    onMouseEnter={() => setHoveredNavItem('message')}
+                                    onMouseLeave={() => setHoveredNavItem(null)}
+                                >
+                                    {activeNavItem === 'message' && (
+                                        <span className="absolute left-0 md:left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
+                                    )}
+                                    <div className="ml-3">
+                                        {renderNavIcon('message', sms)}
+                                    </div>
+                                    <span>Message</span>
+                                </li>
+                                <li
+                                    className={`flex gap-3 items-center py-2 px-4 md:pl-16 md:-ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'analytics' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
+                                    onClick={() => handleNavigation('analytics')}
+                                    onMouseEnter={() => setHoveredNavItem('analytics')}
+                                    onMouseLeave={() => setHoveredNavItem(null)}
+                                >
+                                    {activeNavItem === 'analytics' && (
+                                        <span className="absolute left-0 md:left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
+                                    )}
+                                    <div className="ml-3">
+                                        {renderNavIcon('analytics', MyChart)}
+                                    </div>
+                                    <span>Analytics</span>
+                                </li>
+                                <li
+                                    className={`flex gap-3 items-center py-2 px-4 md:pl-16 md:-ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'team' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
+                                    onClick={() => handleNavigation('teams')}
+                                    onMouseEnter={() => setHoveredNavItem('team')}
+                                    onMouseLeave={() => setHoveredNavItem(null)}
+                                >
+                                    {activeNavItem === 'team' && (
+                                        <span className="absolute left-0 md:left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
+                                    )}
+                                    <div className="ml-3">
+                                        {renderNavIcon('team', twoUsers)}
+                                    </div>
+                                    <span>Team</span>
+                                </li>
+                            </ul>
+                        </nav>
 
-                    <div className="border-t border-gray-200 my-4"></div>
+                        <div className="border-t border-gray-200 my-4"></div>
 
-                    <nav className="py-2">
-                        <ul className="space-y-5">
-                            <li
-                                className={`flex gap-3 items-center py-2 pl-16 -ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'profile' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
-                                onClick={() => handleNavigation('profile')} // Navigate to 'profile'
-                                onMouseEnter={() => setHoveredNavItem('profile')}
-                                onMouseLeave={() => setHoveredNavItem(null)}
-                            >
-                                {activeNavItem === 'profile' && (
-                                    <span className="absolute left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
-                                )}
-                                <div className="ml-3">
-                                    {renderNavIcon('profile', user)}
-                                </div>
-                                <span className={`text-[#0D163A] font-normal ${activeNavItem === 'profile' || hoveredNavItem === 'profile' ? 'text-[#000000] font-semibold' : ''}`}>Profile</span>
-                            </li>
-                            <li
-                                className={`flex gap-3 items-center py-2 pl-16 -ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'settings' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
-                                onClick={() => handleNavigation('settings')} // Navigate to 'settings'
-                                onMouseEnter={() => setHoveredNavItem('settings')}
-                                onMouseLeave={() => setHoveredNavItem(null)}
-                            >
-                                {activeNavItem === 'settings' && (
-                                    <span className="absolute left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
-                                )}
-                                <div className="ml-3">
-                                    {renderNavIcon('settings', setting)}
-                                </div>
-                                <span className={`text-[#0D163A] font-normal ${activeNavItem === 'settings' || hoveredNavItem === 'settings' ? 'text-[#000000] font-semibold' : ''}`}>Settings</span>
-                            </li>
-                        </ul>
-                    </nav>
+                        <nav className="py-2">
+                            <ul className="space-y-5">
+                                <li
+                                    className={`flex gap-3 items-center py-2 px-4 md:pl-16 md:-ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'profile' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
+                                    onClick={() => handleNavigation('profile')}
+                                    onMouseEnter={() => setHoveredNavItem('profile')}
+                                    onMouseLeave={() => setHoveredNavItem(null)}
+                                >
+                                    {activeNavItem === 'profile' && (
+                                        <span className="absolute left-0 md:left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
+                                    )}
+                                    <div className="ml-3">
+                                        {renderNavIcon('profile', user)}
+                                    </div>
+                                    <span className={`text-[#0D163A] font-normal ${activeNavItem === 'profile' || hoveredNavItem === 'profile' ? 'text-[#000000] font-semibold' : ''}`}>Profile</span>
+                                </li>
+                                <li
+                                    className={`flex gap-3 items-center py-2 px-4 md:pl-16 md:-ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'settings' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
+                                    onClick={() => handleNavigation('settings')}
+                                    onMouseEnter={() => setHoveredNavItem('settings')}
+                                    onMouseLeave={() => setHoveredNavItem(null)}
+                                >
+                                    {activeNavItem === 'settings' && (
+                                        <span className="absolute left-0 md:left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
+                                    )}
+                                    <div className="ml-3">
+                                        {renderNavIcon('settings', setting)}
+                                    </div>
+                                    <span className={`text-[#0D163A] font-normal ${activeNavItem === 'settings' || hoveredNavItem === 'settings' ? 'text-[#000000] font-semibold' : ''}`}>Settings</span>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <div className="mt-auto pb-24">
+                        <nav className="py-2">
+                            <ul className="space-y-5">
+                                <li
+                                    className={`flex gap-3 items-center py-2 px-4 md:pl-16 md:-ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'help' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
+                                    onClick={() => handleNavigation('help')}
+                                    onMouseEnter={() => setHoveredNavItem('help')}
+                                    onMouseLeave={() => setHoveredNavItem(null)}
+                                >
+                                    {activeNavItem === 'help' && (
+                                        <span className="absolute left-0 md:left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
+                                    )}
+                                    <div className="ml-3">
+                                        {renderNavIcon('help', infoCircle)}
+                                    </div>
+                                    <span className={`${activeNavItem === 'help' || hoveredNavItem === 'help' ? 'text-[#000000] font-semibold' : ''}`}>Help</span>
+                                </li>
+                                <li
+                                    className={`flex gap-3 items-center py-2 px-4 md:pl-16 md:-ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'logout' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
+                                    onClick={() => handleNavigation('logout')}
+                                    onMouseEnter={() => setHoveredNavItem('logout')}
+                                    onMouseLeave={() => setHoveredNavItem(null)}
+                                >
+                                    {activeNavItem === 'logout' && (
+                                        <span className="absolute left-0 md:left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
+                                    )}
+                                    <div className="ml-3">
+                                        {renderNavIcon('logout', logout)}
+                                    </div>
+                                    <span className={`${activeNavItem === 'logout' || hoveredNavItem === 'logout' ? 'text-[#000000] font-semibold' : ''}`}>Logout</span>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
 
-                {/* Bottom Navigation */}
-                <div className="mt-auto">
-                    <nav className="py-2">
-                        <ul className="space-y-5 mb-4">
-                            <li
-                                className={`flex gap-3 items-center py-2 pl-16 -ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'help' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
-                                onClick={() => handleNavigation('help')} // Navigate to 'help'
-                                onMouseEnter={() => setHoveredNavItem('help')}
-                                onMouseLeave={() => setHoveredNavItem(null)}
-                            >
-                                {activeNavItem === 'help' && (
-                                    <span className="absolute left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
-                                )}
-                                <div className="ml-3">
-                                    {renderNavIcon('help', infoCircle)}
-                                </div>
-                                <span className={`${activeNavItem === 'help' || hoveredNavItem === 'help' ? 'text-[#000000] font-semibold' : ''}`}>Help</span>
-                            </li>
-                            <li
-                                className={`flex gap-3 items-center py-2 pl-16 -ml-10 w-full transition-colors cursor-pointer relative ${activeNavItem === 'logout' ? 'text-black font-semibold tracking-wide' : 'font-medium opacity-70 hover:opacity-100 hover:text-black'}`}
-                                onClick={() => handleNavigation('logout')} // Navigate to 'logout'
-                                onMouseEnter={() => setHoveredNavItem('logout')}
-                                onMouseLeave={() => setHoveredNavItem(null)}
-                            >
-                                {activeNavItem === 'logout' && (
-                                    <span className="absolute left-10 top-0 h-full w-1 bg-[#4745A4]"></span>
-                                )}
-                                <div className="ml-3">
-                                    {renderNavIcon('logout', logout)}
-                                </div>
-                                <span className={`${activeNavItem === 'logout' || hoveredNavItem === 'logout' ? 'text-[#000000] font-semibold' : ''}`}>Logout</span>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
             </div>
 
             {/* Main Content */}
-            <div className="w-5/6 flex flex-col bg-[#F7F7FB]">
+            <div className="flex-1 flex flex-col bg-[#F7F7FB]">
                 {/* Top Header */}
-                <header className="flex gap-10 items-center justify-between m-8">
-                    <div className="relative w-2/3">
+                <header className="sm:hidden sm:px-4 lg:px-0 lg:flex flex-col md:flex-row items-center justify-between md:m-8">
+                    <div className="relative md:w-2/3 lg:pr-8">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <Search className="h-4 w-4 text-black" />
                         </div>
@@ -374,33 +388,35 @@ const Dashboard = () => {
                             className="bg-white h-14 pl-10 pr-4 rounded-full w-full border-0 outline-none"
                         />
                     </div>
-                    <div className="w-1/3 flex items-center justify-evenly space-x-4 bg-white p-3 rounded-full">
-                        <button className="px-4 py-2 rounded-full text-gray-500 hover:bg-gray-100 border border-slate-200">
-                            <img src={notificationBing} alt="My Schedule" className="h-5 w-5" />
-                        </button>
-                        <button className="px-4 py-2 rounded-full text-gray-500 hover:bg-gray-100 border border-slate-200">
-                            <img src={messageText} alt="My Schedule" className="h-5 w-5" />
-                        </button>
+                    <div className="w-full md:w-1/3 flex items-center justify-between md:justify-evenly space-x-4 bg-white p-3 rounded-full">
+                        <div className="flex space-x-2">
+                            <button className="p-2 md:px-4 md:py-2 rounded-full text-gray-500 hover:bg-gray-100 border border-slate-200">
+                                <img src={notificationBing} alt="Notifications" className="h-5 w-5" />
+                            </button>
+                            <button className="p-2 md:px-4 md:py-2 rounded-full text-gray-500 hover:bg-gray-100 border border-slate-200">
+                                <img src={messageText} alt="Messages" className="h-5 w-5" />
+                            </button>
+                        </div>
                         <div className="flex items-center space-x-2">
                             <div className="h-8 w-8 bg-gray-300 rounded-full flex items-center justify-center">
-                                <img src={gallery} alt="My Schedule" className="h-5 w-5" />
+                                <img src={gallery} alt="Profile" className="h-5 w-5" />
                             </div>
-                            <span className="text-sm font-medium">Pratik Karanjit</span>
-                            <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <span className="text-sm font-medium hidden md:block">Pratik Karanjit</span>
+                            <svg className="h-5 w-5 text-gray-400 hidden md:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
                         </div>
                     </div>
                 </header>
 
-                {/* Content Area - Now with flex layout for main content and right sidebar */}
-                <div className="flex mx-4">
-                    {/* Main Content Area - 4/6 width */}
-                    <div className="w-4/6">
+                {/* Content Area */}
+                <div className="flex flex-col lg:flex-row px-4 pb-4">
+                    {/* Main Content Area */}
+                    <div className="w-full lg:w-2/3 xl:w-4/6">
                         {/* Overview Section */}
-                        <div className="bg-white p-5 ml-4 mr-8 rounded-xl">
+                        <div className="bg-white p-5 mb-8 lg:mr-8 rounded-xl lg:ml-4">
                             <h2 className="text-xl font-bold mb-4">Overview</h2>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {/* Balance Card */}
                                 <div className="bg-[#4745A4] p-5 rounded-2xl border border-[#DEDEDEB2]">
                                     <div className="flex flex-row mb-2">
@@ -448,7 +464,6 @@ const Dashboard = () => {
                                     </div>
                                     <hr className='text-[#0D163A] px-5 my-4 opacity-20' />
 
-
                                     <div className='flex flex-row justify-between items-end'>
                                         <div className="text-2xl font-semibold mt-2" style={{ letterSpacing: "-2px", fontSize: "28px" }}>$1,050.44</div>
                                         <img src={arrowRight} alt="Right arrow" className="h-5 w-5" />
@@ -475,8 +490,6 @@ const Dashboard = () => {
                                         </div>
                                     </div>
                                     <hr className='text-[#0D163A] px-5 my-4 opacity-20' />
-
-
 
                                     <div className='flex flex-row justify-between items-end'>
                                         <div className="text-2xl font-semibold mt-2" style={{ letterSpacing: "-2px", fontSize: "28px" }}>$200.31</div>
@@ -505,8 +518,6 @@ const Dashboard = () => {
                                     </div>
                                     <hr className='text-[#0D163A] px-5 my-4 opacity-20' />
 
-
-
                                     <div className='flex flex-row justify-between items-end'>
                                         <div className="text-2xl font-semibold mt-2" style={{ letterSpacing: "-2px", fontSize: "28px" }}>$21,121.0</div>
                                         <img src={arrowRight} alt="Right arrow" className="h-5 w-5" />
@@ -516,10 +527,10 @@ const Dashboard = () => {
                         </div>
 
                         {/* Analytics Section */}
-                        <div className="mb-6 bg-white p-5 ml-4 mr-8 mt-8 rounded-xl">
-                            <div className="flex justify-between items-center mb-4">
+                        <div className="mb-6 bg-white p-5 rounded-xl lg:ml-4 lg:mr-8">
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
                                 <h2 className="text-xl font-bold">Analytics</h2>
-                                <div className="flex items-center space-x-4">
+                                <div className="flex flex-wrap items-center gap-4">
                                     <div className="flex items-center">
                                         <div className="h-3 w-3 bg-indigo-500 rounded-full mr-1"></div>
                                         <span className="text-sm">Label 1</span>
@@ -529,8 +540,10 @@ const Dashboard = () => {
                                         <span className="text-sm">Label 2</span>
                                     </div>
                                     <div className="relative">
-                                        <select className="bg-white border border-[#DEDEDE] text-sm py-2 px-2 pr-10 rounded-lg text-[#615f5f] appearance-none">
+                                        <select className="bg-white border border-[#DEDEDE] text-sm py-2 px-2 pr-10 rounded-lg text-[#615f5f] appearance-none outline-none">
                                             <option className="">Weekly</option>
+                                            <option className="">Monthly</option>
+                                            <option className="">Yearly</option>
                                         </select>
                                         <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
                                             <svg
@@ -546,21 +559,21 @@ const Dashboard = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="w-full bg-gray-50 rounded-lg p-4">
+                            <div className="w-full bg-gray-50 rounded-lg p-4 xl:h-96 lg:h-64 sm:h-64">
                                 <Line ref={chartRef} data={data} options={options} />
                             </div>
                         </div>
                     </div>
 
-                    {/* Right Sidebar - 2/6 width */}
-                    <div className="w-2/6 ml-0 mr-4 mt-0 mb-4 gap-8 flex flex-col">
+                    {/* Right Sidebar */}
+                    <div className="w-full lg:w-1/3 xl:w-2/6 flex flex-col gap-8 lg:mr-4">
                         {/* Saving Plan Section */}
                         <div className="bg-white p-5 rounded-xl">
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-xl font-bold">Saving Plan</h2>
                                 <a href="#" className="text-base font-medium text-[#4745A4]">See All</a>
                             </div>
-                            <hr className='text-[#CFD0D8] px-5 my-6' />
+                            <hr className='text-[#CFD0D8] px-5 mt-6 mb-7' />
 
                             <div className="space-y-7">
                                 {/* Bali Vacation Saving */}
@@ -620,7 +633,7 @@ const Dashboard = () => {
                         </div>
 
                         {/* Recent Transaction Section */}
-                        <div className="mb-6 bg-white p-4 rounded-xl">
+                        <div className="bg-white p-4 rounded-xl">
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-xl font-bold">Recent Transaction</h2>
                                 <a href="#" className="text-base font-medium text-[#4745A4]">See All</a>
@@ -657,7 +670,6 @@ const Dashboard = () => {
                                         </div>
                                     </div>
                                     <div className='flex items-center justify-center flex-col'>
-
                                         <div className="font-semibold text-right text-lg">$120</div>
                                         <div className="text-xs text-[#3BBB6E] font-semibold text-right">Completed</div>
                                     </div>
@@ -675,7 +687,6 @@ const Dashboard = () => {
                                         </div>
                                     </div>
                                     <div className='flex items-center justify-center flex-col'>
-
                                         <div className="font-semibold text-right text-lg">$15</div>
                                         <div className="text-xs text-[#3BBB6E] font-semibold text-right">Completed</div>
                                     </div>
@@ -693,14 +704,12 @@ const Dashboard = () => {
                                         </div>
                                     </div>
                                     <div className='flex items-center justify-center flex-col'>
-
                                         <div className="font-semibold text-right text-lg">$300</div>
                                         <div className="text-xs text-[#3BBB6E] font-semibold text-right">Completed</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
