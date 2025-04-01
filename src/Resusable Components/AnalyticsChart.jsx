@@ -7,49 +7,45 @@ Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryS
 const AnalyticsChart = () => {
     const chartRef = useRef(null);
 
-    const [timeRange, setTimeRange] = useState("weekly"); // Default to weekly view
+    const [timeRange, setTimeRange] = useState("weekly");
 
-    // Updated data to match the UI exactly for weekly view
     const chartData = {
-        daily: [7, 12, 9, 18, 6, 14, 11, 13, 8, 17, 13, 7, 15, 13, 12, 11, 10], // Scattered data for daily
-        weekly: [13, 10, 14, 8, 15, 7, 20, 13, 8, 17, 13, 7, 15, 13, 12, 11, 10], // Unchanged weekly data
-        monthly: [10, 16, 7, 19, 12, 14, 8, 17, 9, 15, 11, 13, 6, 18, 10, 12, 14], // Scattered data for monthly
-        yearly: [15, 8, 12, 18, 10, 14, 9, 16, 11, 13, 7, 19, 6, 17, 10, 12, 14], // Scattered data for yearly
+        daily: [7, 12, 9, 18, 6, 14, 11, 13, 8, 17, 13, 7, 15, 13, 12, 11, 10],
+        weekly: [13, 10, 14, 8, 15, 7, 20, 13, 8, 17, 13, 7, 15, 13, 12, 11, 10],
+        monthly: [10, 16, 7, 19, 12, 14, 8, 17, 9, 15, 11, 13, 6, 18, 10, 12, 14],
+        yearly: [15, 8, 12, 18, 10, 14, 9, 16, 11, 13, 7, 19, 6, 17, 10, 12, 14],
     };
 
-    // Yellow line data (approximately 40-50% of the purple line's values)
     const yellowLineData = {
         daily: chartData.daily.map(value => value * 0.4),
-        weekly: [5, 6, 7, 9, 5, 6, 6, 10, 5, 4, 5, 7, 9, 10, 8, 12, 13], // Matches the yellow line pattern
+        weekly: [5, 6, 7, 9, 5, 6, 6, 10, 5, 4, 5, 7, 9, 10, 8, 12, 13],
         monthly: chartData.monthly.map(value => value * 0.4),
         yearly: chartData.yearly.map(value => value * 0.4),
     };
 
-    // Create the datasets structure
     const datasets = [
         {
             label: "Label 1",
-            data: chartData[timeRange], // Purple line
+            data: chartData[timeRange],
             borderColor: "#8684EB",
             borderWidth: 4,
-            backgroundColor: "rgba(182, 180, 230, 0.3)", // Default value until canvas gradient is applied
+            backgroundColor: "rgba(182, 180, 230, 0.3)",
             fill: true,
-            pointRadius: 0, // Remove points
+            pointRadius: 0,
             tension: 0.4,
         },
         {
             label: "Label 2",
-            data: yellowLineData[timeRange], // Yellow line
+            data: yellowLineData[timeRange],
             borderColor: "#F8CD70",
             borderWidth: 4,
-            backgroundColor: "rgba(248, 205, 112, 0.2)", // Default value until canvas gradient is applied
+            backgroundColor: "rgba(248, 205, 112, 0.2)",
             fill: true,
-            pointRadius: 0, // Remove points
+            pointRadius: 0,
             tension: 0.4,
         },
     ];
 
-    // Extended labels for x-axis to make the curves look smoother
     const extendedLabels = ["", "Sun", "", "Mon", "", "Tue", "", "Wed", "", "Thu", "", "Fri", "", "Sat", ""];
 
     const data = {
@@ -69,7 +65,7 @@ const AnalyticsChart = () => {
                 intersect: false,
             },
             legend: {
-                display: false, // Hide legend as it's custom implemented
+                display: false,
             }
         },
         interaction: {
@@ -78,13 +74,13 @@ const AnalyticsChart = () => {
         },
         elements: {
             point: {
-                radius: 0, // Remove points globally
+                radius: 0,
             },
         },
         scales: {
             x: {
                 grid: {
-                    display: false, // Remove vertical grid lines
+                    display: false,
                 },
                 ticks: {
                     font: {
@@ -92,7 +88,6 @@ const AnalyticsChart = () => {
                         weight: "400",
                     },
                     color: "#999999",
-                    // Only show the main day labels
                     callback: function (val, index) {
                         return index % 2 === 1 ? this.getLabelForValue(val) : '';
                     }
@@ -100,15 +95,15 @@ const AnalyticsChart = () => {
             },
             y: {
                 beginAtZero: true,
-                max: 20, // Match the 20k max from image
+                max: 20,
                 grid: {
                     drawBorder: false,
                     color: "#E5E5E5",
                     lineWidth: 1,
-                    borderDash: [5, 5], // Create dashed lines
+                    borderDash: [5, 5],
                 },
                 ticks: {
-                    stepSize: 5, // 5k steps as shown in the image
+                    stepSize: 5,
                     callback: (value) => value + "k",
                     font: {
                         size: 14,
@@ -120,7 +115,6 @@ const AnalyticsChart = () => {
         },
     };
 
-    // This function applies gradients to the chart
     const applyGradients = (chart) => {
         if (!chart) return;
         const ctx = chart.ctx;
@@ -134,19 +128,16 @@ const AnalyticsChart = () => {
         yellowGradient.addColorStop(0, "rgba(248, 205, 112, 0.3)");
         yellowGradient.addColorStop(1, "rgba(248, 205, 112, 0)");
 
-        // Apply the gradients to the datasets
         chart.data.datasets[0].backgroundColor = purpleGradient;
         chart.data.datasets[1].backgroundColor = yellowGradient;
 
         chart.update();
     };
 
-    // Apply gradients when the chart renders and when timeRange changes
     useEffect(() => {
         const chart = chartRef.current;
         if (!chart) return;
 
-        // Create a handler for chart render events
         const handleRender = () => {
             applyGradients(chart);
         };

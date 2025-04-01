@@ -7,20 +7,17 @@ import directDown from "../assets/direct-down.svg";
 import arrowRightWhite from "../assets/arrow-right-white.svg";
 import emptyWallet from "../assets/empty-wallet.svg";
 
-// AnimatedNumber component with enhanced features
 const AnimatedNumber = ({ value, duration = 1000, decimals = 0, delay = 0 }) => {
     const [count, setCount] = useState(0);
     const countRef = useRef(null);
 
     useEffect(() => {
-        // Parse the numeric value from a string if needed
         const finalValue = typeof value === 'string'
             ? parseFloat(value.replace(/[^0-9.-]+/g, ''))
             : value;
 
         if (isNaN(finalValue)) return;
 
-        // Delay the start of animation if specified
         const timer = setTimeout(() => {
             let startTime;
             let animationFrame;
@@ -30,7 +27,6 @@ const AnimatedNumber = ({ value, duration = 1000, decimals = 0, delay = 0 }) => 
                 const progress = timestamp - startTime;
                 const percentage = Math.min(progress / duration, 1);
 
-                // Improved easing function for more dynamic movement
                 const easeOutBack = percentage < 0.5
                     ? 4 * percentage * percentage * percentage
                     : 1 - Math.pow(-2 * percentage + 2, 3) / 2;
@@ -70,12 +66,10 @@ const AnimatedNumber = ({ value, duration = 1000, decimals = 0, delay = 0 }) => 
     return <span ref={countRef} className="animated-number">{formattedNumber}</span>;
 };
 
-// Card component with hover effects
 const FinanceCard = ({ bgColor, borderColor, titleColor, title, icon, percentage, comparisonColor, comparisonBg, value, decimals, arrowIcon, delay }) => {
     const [isHovered, setIsHovered] = useState(false);
     const cardRef = useRef(null);
 
-    // Add subtle parallax effect on mouse move
     useEffect(() => {
         const card = cardRef.current;
         if (!card) return;
@@ -86,7 +80,6 @@ const FinanceCard = ({ bgColor, borderColor, titleColor, title, icon, percentage
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
 
-            // Calculate rotation values based on mouse position
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
             const rotateX = (y - centerY) / 25;
@@ -147,7 +140,6 @@ const FinanceCard = ({ bgColor, borderColor, titleColor, title, icon, percentage
 };
 
 const Overview = () => {
-    // Add gradient animations to background
     useEffect(() => {
         const style = document.createElement('style');
         style.textContent = `
@@ -203,7 +195,6 @@ const Overview = () => {
         };
     }, []);
 
-    // Add scroll reveal animation
     const overviewRef = useRef(null);
     const [isVisible, setIsVisible] = useState(false);
 

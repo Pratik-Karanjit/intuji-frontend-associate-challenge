@@ -9,17 +9,15 @@ import setting from "../assets/setting.svg";
 import infoCircle from "../assets/info-circle.svg";
 import logout from "../assets/login.svg";
 import gallery from "../assets/gallery.svg";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
 const NavBar = ({ activeRoute = 'dashboard' }) => {
-    // Use the activeRoute prop as the initial state
     const [activeNavItem, setActiveNavItem] = useState(activeRoute);
     const [hoveredNavItem, setHoveredNavItem] = useState(null);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
     const navigate = useNavigate();
 
-    // Update activeNavItem whenever activeRoute prop changes
     useEffect(() => {
         setActiveNavItem(activeRoute);
     }, [activeRoute]);
@@ -27,7 +25,7 @@ const NavBar = ({ activeRoute = 'dashboard' }) => {
     const handleNavigation = (route) => {
         setActiveNavItem(route);
         navigate(`/${route}`);
-        setShowMobileMenu(false); // Close mobile menu on navigation
+        setShowMobileMenu(false);
     };
 
     const renderNavIcon = (name, path) => {
@@ -129,8 +127,6 @@ const NavBar = ({ activeRoute = 'dashboard' }) => {
                 </button>
             </div>
 
-            {/* Left Sidebar - Hidden on mobile unless toggled */}
-
             <div
                 className={`${showMobileMenu ? 'block' : 'hidden'} md:block bg-white flex flex-col h-screen w-full md:w-1/6 z-10`}
                 style={{ position: 'fixed' }}
@@ -143,7 +139,6 @@ const NavBar = ({ activeRoute = 'dashboard' }) => {
 
                 {/* Main Navigation */}
                 <div className="flex flex-col h-full">
-                    {/* Main navigation section */}
                     <div className="flex-1 overflow-y-auto">
                         <nav className="py-2">
                             <ul className="space-y-5">

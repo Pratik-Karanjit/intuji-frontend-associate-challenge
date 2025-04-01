@@ -9,12 +9,10 @@ const Header = () => {
     const [showMessages, setShowMessages] = useState(false);
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
-    // Create refs for each dropdown to handle outside clicks
     const notificationsRef = useRef(null);
     const messagesRef = useRef(null);
     const profileRef = useRef(null);
 
-    // Handle clicks outside dropdowns to close them
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
@@ -69,7 +67,7 @@ const Header = () => {
                     <div ref={notificationsRef} className="relative">
                         <button
                             onClick={toggleNotifications}
-                            className="p-2 md:px-4 md:py-2 rounded-full text-gray-500 hover:bg-gray-100 border border-slate-200"
+                            className="p-2 md:px-4 md:py-2 rounded-full text-gray-500 hover:bg-gray-100 border border-slate-200 cursor-pointer"
                         >
                             <img src={notificationBing} alt="Notifications" className="h-5 w-5" />
                         </button>
@@ -84,7 +82,7 @@ const Header = () => {
                     <div ref={messagesRef} className="relative">
                         <button
                             onClick={toggleMessages}
-                            className="p-2 md:px-4 md:py-2 rounded-full text-gray-500 hover:bg-gray-100 border border-slate-200"
+                            className="p-2 md:px-4 md:py-2 rounded-full text-gray-500 hover:bg-gray-100 border border-slate-200 cursor-pointer"
                         >
                             <img src={messageText} alt="Messages" className="h-5 w-5" />
                         </button>

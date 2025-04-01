@@ -10,12 +10,10 @@ import NavBar from '../Resusable Components/NavBar';
 const Dashboard = () => {
     return (
         <div className="flex flex-col md:flex-row bg-gray-100 w-full min-h-screen">
-            {/* NavBar component - now properly positioned for mobile */}
             <div className="md:flex-shrink-0 z-20">
                 <NavBar activeRoute='dashboard' />
             </div>
 
-            {/* Main Content - adjusted for mobile */}
             <div className="flex-1 flex flex-col bg-[#F7F7FB] md:ml-[16.666667%]">
                 {/* Top Header */}
                 <Header />
