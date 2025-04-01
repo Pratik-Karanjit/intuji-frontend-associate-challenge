@@ -130,7 +130,11 @@ const NavBar = ({ activeRoute = 'dashboard' }) => {
             </div>
 
             {/* Left Sidebar - Hidden on mobile unless toggled */}
-            <div className={`${showMobileMenu ? 'block' : 'hidden'} md:block w-full md:w-1/6 bg-white flex flex-col md:h-screen sticky top-0 z-10`}>
+
+            <div
+                className={`${showMobileMenu ? 'block' : 'hidden'} md:block bg-white flex flex-col h-screen w-full md:w-1/6 z-10`}
+                style={{ position: 'fixed' }}
+            >
                 <div className="p-4 flex justify-center items-center hidden md:flex">
                     <div className="bg-[#D9D9D9] w-2/3 h-12 flex items-center justify-center">
                         <img src={gallery} alt="My Schedule" className="h-6 w-6" />
